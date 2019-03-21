@@ -7,6 +7,6 @@ class Session
 
 	    public function __construct(Request $request)
 	    {
-	    	   $request->test();
+	    	   
 	    }
 }

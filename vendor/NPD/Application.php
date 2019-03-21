@@ -43,6 +43,17 @@ class Application
 	    	   // Load main helpers files
 	    	   $this->loadHelpers();
 
+
+	    	   // initialize request class
+	    	   // and prepare its main settings
+           $this->register('request', new Request());
+
+            
+           // require the index file for the current script
+
+            require ROOT . 'scripts'. DS . $this->request->getScriptName() . DS . 'index.php';
+
+
 	    	   // initialize session class
 	    	   $this->register('session', function ($app) {
 	    	   	    return (new Session($app->request));
@@ -91,7 +102,7 @@ class Application
 	    */
 	    private function loadHelpers()
 	    {
-	    	  foreach (glob(ROOT . 'vendor' . DS . 'NPD' . 'Helpers' . DS .'*.php') as $file)
+	    	  foreach (glob(ROOT . 'vendor' . DS . 'NPD' . DS . 'Helpers' . DS .'*.php') as $file)
 	    	  {
 	    	  	   require $file;
 	    	  }

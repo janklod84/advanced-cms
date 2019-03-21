@@ -8,16 +8,6 @@ require ROOT . 'vendor' . DS . 'NPD' . DS . 'Application.php';
 $app = new NPD\Application();
 
 
-/*
-$app->register('test', function($application) {
-   return 'tested';
-});
-
-
-echo $app->test;
-*/
-
-
 // initialiaze main settings
 $app->bootstrap();
 
