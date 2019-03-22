@@ -82,7 +82,7 @@ class Request
          * 
          * @return array
         */
-        public function route()
+        public function getRoute()
         {
         	 return $this->route;
         }

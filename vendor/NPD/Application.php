@@ -3,7 +3,7 @@ namespace NPD;
 
 
 use Closure;
-
+use NPD\Routing\Router as Route;
 
 class Application 
 {
@@ -35,40 +35,48 @@ class Application
          * 
          * @return void
         */
-	    public function bootstrap()
-	    {
-               // Load the method that is responsible for loading classes
-	    	   $this->loadClasses();
+  	    public function bootstrap()
+  	    {
+             // Load the method that is responsible for loading classes
+  	    	   $this->loadClasses();
 
-	    	   // Load main helpers files
-	    	   $this->loadHelpers();
+  	    	   // Load main helpers files
+  	    	   $this->loadHelpers();
 
 
-	    	   // initialize request class
-	    	   // and prepare its main settings
-           $this->register('request', new Request());
+  	    	   // initialize request class
+  	    	   // and prepare its main settings
+             $this->register('request', new Request());
 
+              
+             // initialise route class
+             $route = new Route($this->request);
+             $this->register('route', $route);
+
+
+             // require the index file for the current script [index.php as routes.php]
+             require ROOT . 'scripts'. DS . $this->request->getScriptName() . DS . 'index.php';
+
+
+  	    	   // initialize session class
+  	    	   $this->register('session', function ($app) {
+  	    	   	    return (new Session($app->request));
+  	    	   });
+
+             // Route build 
+             $this->route->build();
             
-           // require the index file for the current script
+  	    }
 
-            require ROOT . 'scripts'. DS . $this->request->getScriptName() . DS . 'index.php';
-
-
-	    	   // initialize session class
-	    	   $this->register('session', function ($app) {
-	    	   	    return (new Session($app->request));
-	    	   });
-	    }
-
-	    /**
-	     * Register classes in the spl library
-	     * 
-	     * @return void
-	    */
-	    private function loadClasses()
-	    {
-            spl_autoload_register([$this, 'loadClass']);
-	    }
+  	    /**
+  	     * Register classes in the spl library
+  	     * 
+  	     * @return void
+  	    */
+  	    private function loadClasses()
+  	    {
+              spl_autoload_register([$this, 'loadClass']);
+  	    }
 
         
         /**
