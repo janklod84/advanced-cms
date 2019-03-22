@@ -2,13 +2,13 @@
 namespace NPD\Routing;
 
 use Closure;
-use NPD\Request;
-
+use NPD\Http\Request;
+use NPD\Loader;
 
 class Router
 {
      
-        /**
+     /**
 	     * current route of the request
 	     * @var string
 	    */
@@ -22,40 +22,49 @@ class Router
 	     */
 	     private $routeCollection;
 
+       
+       /**
+          * pointer to not found page
+          * 
+          * @var Route
+       */
+       private $notFound;
 
-	     /**
-	      * container of controller names
-	      * that will be loaded before | after main route loads
-	      * 
-	      * @var array 
-	     */
-	     private $calls = [];
+       /**
+        * The data comming the controller method
+        * 
+        * @var string
+       */
+       private $data;
+
 
 
 	     /**
 	      * Request Object 
-	      * @var Request
+	      * @var NPD\Http\Request
 	     */
 	     private $request;
 
 
-	     /**
-	      * pointer to not found page
-	      * 
-	      * @var Route
-	     */
-	     private $notFound;
+  	   /**
+        * Loader Object
+        * 
+        * @var NPD\Loader
+       */ 
+       private $load;
+
 
          
-         /**
-          * Cosntructor Route
-          * @param Request $request 
-          * @return void
-          */
-	     public function __construct(Request $request)
+       /**
+        * Cosntructor Route
+        * @param NPD\Http\Request $request 
+        * @return void
+       */
+	     public function __construct(Request $request, Loader $loader)
 	     {
-	     	    $this->request = $request;
-	     	    $this->routeCollection  = new RoutesCollection();
+	     	     $this->request = $request;
+             $this->load    = $loader;
+	     	     $this->routeCollection  = new RoutesCollection();
 	     }
 
          
@@ -133,7 +142,7 @@ class Router
 
                      } else {
 
-                     	 $this->routeCollection->store($routeObject);
+                     	   $this->routeCollection->store($routeObject);
                      }
 
                 }else{
@@ -150,9 +159,9 @@ class Router
                 	   }
                        
                        $route->path($routePath);
-                	   $route->controller($controller);
-                	   $route->method($method);
-                	   $this->routeCollection->store($route);
+                	     $route->controller($controller);
+                	     $route->method($method);
+                	     $this->routeCollection->store($route);
                 }
          }
 
@@ -170,8 +179,19 @@ class Router
               {
                    $route = $this->routeCollection->getRouteObject();
 
-                   pre($route);
-                   
+                   if($route->getRequestMethod() != $this->request->method())
+                   {
+                   	    // redirect to not found page
+
+                   } else {
+                        
+                        $controller = $route->getController();
+                        $method     = $route->getMethod();
+                        $arguments  = $route->getArguments();
+                        $this->data = $this->load->controller($controller, $method, $arguments);
+                        echo $this->data;
+                   }
+
               }else{
 
              	  // not found

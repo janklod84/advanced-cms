@@ -1,5 +1,5 @@
 <?php
-namespace NPD;
+namespace NPD\Http;
 
 
 class Request 

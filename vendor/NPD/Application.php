@@ -4,6 +4,9 @@ namespace NPD;
 
 use Closure;
 use NPD\Routing\Router as Route;
+use NPD\Routing\Dispatcher;
+use NPD\Http\Request;
+
 
 class Application 
 {
@@ -47,21 +50,33 @@ class Application
   	    	   // initialize request class
   	    	   // and prepare its main settings
              $this->register('request', new Request());
+             
 
-              
+             // stock property in variable for using later
+             $request = $this->request;
+
+
+             // share load
+             $this->register('load', new Loader(new Dispatcher($request)));
+             
+             // stock property in variable for using later
+             $loader = $this->load;
+
+
              // initialise route class
-             $route = new Route($this->request);
+             $route = new Route($request, $loader);
              $this->register('route', $route);
 
 
              // require the index file for the current script [index.php as routes.php]
-             require ROOT . 'scripts'. DS . $this->request->getScriptName() . DS . 'index.php';
+             require ROOT . 'scripts'. DS . $request->getScriptName() . DS . 'index.php';
 
 
   	    	   // initialize session class
   	    	   $this->register('session', function ($app) {
   	    	   	    return (new Session($app->request));
   	    	   });
+
 
              // Route build 
              $this->route->build();

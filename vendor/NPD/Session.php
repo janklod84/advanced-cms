@@ -1,6 +1,8 @@
 <?php  
 namespace NPD;
 
+use NPD\Http\Request;
+
 
 class Session 
 {

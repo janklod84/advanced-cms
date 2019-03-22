@@ -128,15 +128,14 @@ class Route
          }
          
          /**
-          * set the the controller name
-          * and create the file path for that controller
+          * set the controller name
           * 
           * @param string $controller
           * @return void
          */
          public function controller($controller)
          {
-              $this->file = $this->controller = $controller;
+              $this->controller = $controller;
          }
          
          /**
@@ -231,7 +230,23 @@ class Route
                return $this->method;
          }
 
+         /**
+          * get the arguments that will be passed to the method
+          * 
+          * @return array
+         */
+         public function getArguments()
+         {
+             return $this->args;
+         }
 
+
+
+         /**
+          * Add arguments
+          * 
+          * @var array $arguments
+         */
          public function arguments(array $arguments)
          {
                $this->args = $arguments;
