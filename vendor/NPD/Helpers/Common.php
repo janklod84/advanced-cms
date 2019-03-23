@@ -1,5 +1,45 @@
 <?php 
 
+if(!function_exists('camel_case'))
+{
+       
+        /**
+         * convert string to be written in camel case
+         * 
+         * @param string $string
+         * @param bool $upper_camel_case
+         * @return string
+         */
+        function camel_case($string, $upper_camel_case = true)
+        {
+        	  if(strpos($string, '_') !== false)
+        	  {
+        	  	    $words = explode('_', $string);
+
+        	  }elseif(strpos($string, '_') !== false){
+
+                    $words = explode('-', $string);
+
+        	  }else{
+
+        	  	   return $upper_camel_case ? ucfirst($string) : lcfirst($string);
+        	  }
+
+        	  $words = array_map('ucfirst', $words);
+
+        	  if(!$upper_camel_case)
+        	  {
+        	  	   // it means it will be lower camel case
+        	  	   $words[0] = lcfirst($words[0]);
+        	  }
+
+        	  return implode('', $words);
+        }
+
+}
+
+
+
 if(!function_exists('array_get'))
 {
        /**

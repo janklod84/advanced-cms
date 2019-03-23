@@ -20,6 +20,15 @@ class Application
 
         
         /**
+         * a container of classes aliases
+         * 
+         * @var array
+        */
+         private $aliases = [];
+
+
+
+        /**
          * Set specials registers to store its values in customized way
          * 
          * @var array
@@ -40,6 +49,12 @@ class Application
         */
   	    public function bootstrap()
   	    {
+
+             // Load classes alias
+             $this->loadAliases();
+
+
+
              // Load the method that is responsible for loading classes
   	    	   $this->loadClasses();
 
@@ -57,7 +72,7 @@ class Application
 
 
              // share load
-             $this->register('load', new Loader(new Dispatcher($request)));
+             $this->register('load', new Loader(new Dispatcher($request, $this)));
              
              // stock property in variable for using later
              $loader = $this->load;
@@ -116,6 +131,35 @@ class Application
               	  die('class ' . $className .' not found in '. $file);
               }
 	    }
+
+
+      /**
+       * save the class alias to the spl library
+       * 
+       * @return void
+      */
+      private function loadAliases()
+      {
+           $this->aliases = [
+               'Controller' => 'NPD\\Routing\\Controller'
+           ];
+
+           spl_autoload_register([$this, 'loadAlias']);
+      }
+
+
+      /**
+       * get the original class name from its alias used by spl_autoload_register
+       * 
+      */
+      private function loadAlias($alias)
+      {
+           if(isset($this->aliases[$alias]))
+           {
+                return class_alias($this->aliases[$alias], $alias);
+           }
+      }
+
 
 
 	    /**

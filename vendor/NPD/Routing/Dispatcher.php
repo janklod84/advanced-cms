@@ -2,7 +2,7 @@
 namespace NPD\Routing;
 
 use NPD\Http\Request;
-
+use NPD\Application;
 
 class Dispatcher
 {
@@ -13,6 +13,15 @@ class Dispatcher
          * @var NPD\Http\Request $request
         */
         private $request;
+        
+
+        /**
+         * Application object
+         * 
+         * @var NPD\Application
+        */
+        private $app;
+
 
 
         /**
@@ -38,9 +47,10 @@ class Dispatcher
          * 
          * @param NPD\Http\Request $request
         */
-        public function __construct(Request $request)
+        public function __construct(Request $request, Application $app)
         {
               $this->request = $request;
+              $this->app = $app;
               $this->preparePath();
         }
 
@@ -75,7 +85,16 @@ class Dispatcher
 	    {
              $className = $this->script . '\\';     // frontend\
              $className .= str_replace('/', '\\', $controller); // fontend\main\home
-             $className .= 'Controller';  // fontend\main\homeController
+             
+             // echo $className .'<br>'; frontend\main\home
+
+             $className = explode(DS, $className);
+             $className = array_map('camel_case', $className);
+             $className = implode(DS, $className);
+
+             // echo $className .'<br>'; Frontend\Main\Home
+
+             $className .= 'Controller';
 
              $file = $this->path;
              $file .= str_replace(['/', '\\'], DS, $controller) .'.php'; // main\home or main/home
@@ -85,11 +104,13 @@ class Dispatcher
              {
              	 require($file);
 
-             	 $object = new $className();
+             	 $object = new $className($this->app);
                  
              	 if(is_callable([$object, $method]))
              	 {
-             	 	  return call_user_func_array([$object, $method], $args);
+             	 	  $data = call_user_func_array([$object, $method], $args);
+
+             	 	  return compact('object', 'data');
 
              	 }else{
                       

@@ -40,7 +40,7 @@ class Loader
        */
 	   public function __construct(Dispatcher $dispatcher)
 	   {
-              $this->dispatcher = $dispatcher;
+             $this->dispatcher = $dispatcher;
 	   }
 
 	   /**
@@ -53,6 +53,40 @@ class Loader
 	   */
 	   public function controller($controller, $method, array $arguments = [])
 	   {
-	   	     return $this->dispatcher->dispatch($controller, $method, $arguments);
+	   	     if($this->controllerExists($controller))
+	   	     {
+	   	     	    echo $method .'<br>';
+
+	   	     	    $object = $this->controllers[$controller];
+
+	   	     	    if(is_callable([$object, $method]))
+	   	     	    {
+	   	     	    	  return call_user_func_array([$object, $method], $arguments);
+
+	   	     	    }else{
+
+	   	     	    	  // redirect to not found page
+                          echo 'private';
+	   	     	    }
+
+	   	     }else{
+                
+     	   	     $result = $this->dispatcher->dispatch($controller, $method, $arguments);
+                 $this->controllers[$controller] = $result['object'];
+                 return $result['data'];
+	   	     }
+
+	   }
+
+
+	   /**
+	    * determine wether controller object is stored in controllers container
+	    * 
+	    * @param string $controller
+	    * @return bool
+	   */
+	   private function controllerExists($controller)
+	   {
+	   	     return (bool) isset($this->controllers[$controller]);
 	   }
 }

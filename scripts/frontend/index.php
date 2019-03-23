@@ -21,4 +21,8 @@ $router->get(function($route){
 });
 
 
+echo __FILE__;
+$args = ['some argument value'];
+echo app('load')->controller('main/home', 'test', $args);
+
 $router->notFound('404', 'error/not-found');

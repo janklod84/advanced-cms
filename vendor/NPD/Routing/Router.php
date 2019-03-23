@@ -194,8 +194,8 @@ class Router
 
               }else{
 
-             	  // not found
-              	  $route = $this->notFound();
+             	    // not found
+              	  $route = $this->notFound; // pre($route);
               	  // redirect to not found page
               }
          }
